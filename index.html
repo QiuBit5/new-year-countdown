@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 新年倒计时 & 愿望墙</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #ff6b6b, #ee5a24, #feca57, #ff9ff3, #54a0ff, #5f27cd);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: white;
+            position: relative;
+        }
+        
+        /* Enhanced Glass Morphism */
+        .glass-morphism {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .glass-morphism:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Countdown Styles */
+        .countdown-digit {
+            font-family: 'Inter', monospace;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            box-shadow: 
+                0 8px 32px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            color: white !important;
+            text-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.8),
+                2px 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            padding: 20px;
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .countdown-digit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .countdown-digit:hover::before {
+            left: 100%;
+        }
+
+        .countdown-number {
+            display: inline-block;
+            font-size: clamp(2rem, 5vw, 4rem);
+            transition: transform 0.3s ease;
+        }
+
+
+        .countdown-digit.changed::before {
+            animation: slideRight 0.6s ease-out forwards;
+        }
+        .countdown-digit.changed.reverse::before {
+            animation: slideLeft 0.6s ease-out forwards;
+        }
+        @keyframes slideRight {
+            from { left: -100%; }
+            to { left: 100%; }
+        }
+        @keyframes slideLeft {
+            from { left: 100%; }
+            to { left: -100%; }
+        }
+
+        .countdown-digit.changed .countdown-number {
+            animation: numberPulse 0.4s ease-out;
+        }
+
+         @keyframes numberPulse {
+            0% { 
+                transform: scale(1);
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            }
+            25% {
+                transform: scale(1.04);
+                text-shadow: 0 0 15px rgba(255, 255, 255, 0.9), 0 0 25px rgba(255, 200, 100, 0.3);
+            }
+            50% { 
+                transform: scale(1.08);
+                text-shadow: 
+                    0 0 18px rgba(255, 255, 255, 0.95), 
+                    0 0 30px rgba(255, 200, 100, 0.45),
+                    0 0 45px rgba(255, 200, 100, 0.3);
+            }
+            75% {
+                transform: scale(1.04);
+                text-shadow: 0 0 15px rgba(255, 255, 255, 0.9), 0 0 25px rgba(255, 200, 100, 0.3);
+            }
+            100% { 
+                transform: scale(1);
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            }
+        }
+
+        
+
+        .countdown-digit.changed {
+            animation: borderGlow 0.4s ease-out;
+        }
+
+@keyframes borderGlow {
+    0% { 
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    25% {
+        box-shadow: 
+            0 0 15px rgba(255, 255, 255, 0.2), 
+            0 8px 32px rgba(0,0,0,0.3),
+            inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+    50% { 
+        box-shadow: 
+            0 0 25px rgba(255, 255, 255, 0.25), 
+            0 8px 32px rgba(0,0,0,0.3),
+            inset 0 1px 0 rgba(255,255,255,0.18);
+    }
+    75% {
+        box-shadow: 
+            0 0 15px rgba(255, 255, 255, 0.2), 
+            0 8px 32px rgba(0,0,0,0.3),
+            inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+    100% { 
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+}
+
+        .countdown-digit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+        
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+        }
+        
+        /* Typography */
+        .title-gradient {
+            background: var(--primary-gradient);
+            background-size: 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 8s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0%; }
+            50% { background-position: 100%; }
+            100% { background-position: 0%; }
+        }
+
+        .subtitle {
+            font-weight: 300;
+            letter-spacing: 2px;
+            opacity: 0.9;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #54a0ff, #5f27cd);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(84, 160, 255, 0.4);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(84, 160, 255, 0.6);
+        }
+        
+        /* Input Styles */
+        .input-glass {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            width: 100%;
+        }
+        
+        .input-glass:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+        }
+        
+        /* Danmaku Styles */
+        .danmaku {
+            position: absolute;
+            white-space: nowrap;
+            font-weight: 600;
+            text-shadow: 
+                2px 2px 4px rgba(0, 0, 0, 0.8),
+                0 0 10px currentColor;
+            animation-timing-function: linear;
+            animation-fill-mode: forwards;
+            backdrop-filter: blur(5px);
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        @keyframes danmakuMove {
+            from { transform: translateX(0); }
+            /* to { transform: translateX(-100vw); } */
+            to { transform: translateX(calc(-100vw - 100%)); }
+            /* to { transform: translateX(calc(-100vw - 500px)); } */
+        }
+        
+        /* Starfield */
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 6s infinite ease-in-out;
+            box-shadow: 0 0 10px currentColor;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.1; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Meteor Styles */
+        .meteor {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px white, 0 0 20px rgba(255,255,255,0.8);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .meteor::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            /* right: 0; */
+            left: 0; 
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(to right, rgba(255,255,255,0.8), transparent);
+            transform: translateY(-50%);
+            transform-origin: left center; 
+        }
+
+        @keyframes meteorFall {
+            from {
+                transform: translate(0, 0) rotate(-45deg);
+                opacity: 1;
+            }
+            to {
+                transform: translate(-400px, 400px) rotate(-45deg);
+                opacity: 0;
+            }
+        }
+
+        /* Section Headers */
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+
+        /* Wishes List */
+        .wish-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wish-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-gradient);
+        }
+
+        .wish-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .delete-wish-btn {
+            background: linear-gradient(135deg, #ff4757, #c44569);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-wish-btn:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+        }
+
+        /* Background Animation */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .countdown-digit {
+                font-size: 2.5rem !important;
+                padding: 20px 10px !important;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .theme-btn {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        /* 鼠标拖尾效果 */
+        /* Mouse Heart Effect */
+        .mouse-heart {
+            position: fixed;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            animation: heartFloat 1.5s ease-out forwards;
+            user-select: none;
+        }
+        @keyframes heartFloat {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            10% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) translateY(80px) translateX(0) scale(0.5);
+            }
+        }
+
+        /* 烟花特效 */
+        .firework {
+            position: fixed;
+            pointer-events: none;
+            z-index: 100;
+            will-change: transform;
+        }
+
+        .firework-particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+
+        @keyframes fireworkRise {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-200px) scale(0.8);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes fireworkExplode {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* 彩带飘落效果 */
+        .confetti {
+            position: fixed;
+            pointer-events: none;
+            z-index: 90;
+            top: -10px;
+            will-change: transform, opacity;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* 庆祝文字动画 */
+        .celebration-title {
+            animation: titleBounce 1s ease-out, titlePulse 2s ease-in-out infinite 1s;
+        }
+
+        @keyframes titleBounce {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes titlePulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.15);
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation"></div>
+    
+    <!-- Starfield -->
+    <div id="starfield" class="fixed inset-0 z-0"></div>
+    
+
+    
+    <!-- Main Content -->
+    <div class="relative z-20 container mx-auto px-4 py-12">
+        <!-- Header -->
+        <header class="text-center mb-16">
+            <h1 class="text-[clamp(3rem,8vw,6rem)] font-extrabold mb-6 title-gradient tracking-tight">
+                2026 新年倒计时
+            </h1>
+            <p class="text-[clamp(1.2rem,3vw,1.8rem)] subtitle text-gray-300 mb-8">
+                距离新年还有...
+            </p>
+        </header>
+        
+        <!-- Main Content -->
+        <main>
+            <!-- Countdown Section -->
+            <section id="countdown-section" class="mb-20">
+                <div class="grid grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto">
+                    <div class="text-center">
+                        <div id="days" class="font-bold countdown-digit p-6 md:p-8 mb-4"><span class="countdown-number">00</span></div>
+                        <p class="text-xl md:text-2xl font-light text-gray-300">天</p>
+                    </div>
+                    <div class="text-center">
+                        <div id="hours" class="font-bold countdown-digit p-6 md:p-8 mb-4"><span class="countdown-number">00</span></div>
+                        <p class="text-xl md:text-2xl font-light text-gray-300">时</p>
+                    </div>
+                    <div class="text-center">
+                        <div id="minutes" class="font-bold countdown-digit p-6 md:p-8 mb-4"><span class="countdown-number">00</span></div>
+                        <p class="text-xl md:text-2xl font-light text-gray-300">分</p>
+                    </div>
+                    <div class="text-center">
+                        <div id="seconds" class="font-bold countdown-digit p-6 md:p-8 mb-4"><span class="countdown-number">00</span></div>
+                        <p class="text-xl md:text-2xl font-light text-gray-300">秒</p>
+                    </div>
+                </div>
+            </section>
+        
+            <!-- Wish Section -->
+            <section id="wish-section" class="mb-20 max-w-3xl mx-auto">
+                <h2 class="section-title text-center mb-10">许下你的新年愿望</h2>
+                <div class="glass-morphism rounded-2xl p-8 mb-8">
+                    <textarea 
+                        id="wish-input" 
+                        class="input-glass w-full h-32 md:h-40 resize-none" 
+                        placeholder="在新的一年里，我希望...&#10;&#10;✨ 身体健康，万事如意&#10;💖 家庭幸福，事业有成&#10;💡 换行可添加多个愿望"
+                    ></textarea>
+                    <div class="flex flex-col sm:flex-row justify-between gap-4 mt-6">
+                        <button id="add-wish-btn" class="btn-primary flex items-center justify-center gap-2 py-3 px-8 text-lg">
+                            <i data-lucide="plus-circle" class="w-6 h-6"></i>
+                            添加愿望
+                        </button>
+                        <button id="clear-wishes-btn" class="btn-secondary flex items-center justify-center gap-2 py-3 px-8 text-lg">
+                            <i data-lucide="trash-2" class="w-6 h-6"></i>
+                            清空愿望
+                        </button>
+                    </div>
+                </div>
+                <div id="wishes-list" class="mt-10 space-y-6"></div>
+            </section>
+
+
+
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-20 text-center text-gray-400">
+            <div class="glass-morphism inline-block rounded-xl px-8 py-4">
+                <p class="text-lg">&copy; 2025 新年倒计时. 愿你的愿望都能实现! ✨</p>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Danmaku Container -->
+    <div id="danmaku-container" class="fixed inset-0 z-5 pointer-events-none overflow-hidden"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.544.0/dist/umd/lucide.min.js"></script>
+    <script>
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✨ Enhanced New Year Countdown initialized!');
+            
+            // Initialize Lucide icons
+            lucide.createIcons();
+            
+            // ==================== COUNTDOWN SYSTEM ====================
+            const countdownElements = {
+                days: document.getElementById('days'),
+                hours: document.getElementById('hours'),
+                minutes: document.getElementById('minutes'),
+                seconds: document.getElementById('seconds')
+            };
+
+            const targetDate = new Date('2026-02-17T00:00:00').getTime();
+            let previousTime = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+            let slideDirection = 0; // 计数器，记录滑动方向 
+
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+
+                console.log('Current time:', now);
+                console.log('Target time:', targetDate);
+                console.log('Distance:', distance);
+
+                if (distance < 0) {
+                    // New Year has arrived!
+                    celebrateNewYear();
+                    return;
+                }
+
+                const time = {
+                    days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+                    hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                    minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+                    seconds: Math.floor((distance % (1000 * 60)) / 1000)
+                };
+
+                console.log('Calculated time:', time);
+
+                // Update each digit with animation if changed   
+                Object.keys(time).forEach(key => {
+                    const formattedTime = time[key].toString().padStart(2, '0');
+                    if (countdownElements[key]) {
+                        const numberSpan = countdownElements[key].querySelector('.countdown-number');
+                        if (numberSpan && formattedTime !== numberSpan.textContent) {
+                            // 交替方向：奇数次左→右，偶数次右→左
+                            if (slideDirection % 2 === 0) {
+                                countdownElements[key].classList.remove('reverse');
+                            } else {
+                                countdownElements[key].classList.add('reverse');
+                            }
+                            slideDirection++;
+                            
+                            countdownElements[key].classList.add('changed');
+                            setTimeout(() => {
+                                countdownElements[key].classList.remove('changed');
+                            }, 600); // 改为800ms匹配动画时间
+                        }
+                        if (numberSpan) {
+                            numberSpan.textContent = formattedTime;
+                        }
+                        countdownElements[key].style.color = 'white';
+                        countdownElements[key].style.fontWeight = 'bold';
+                        countdownElements[key].style.zIndex = '1000';
+                    }
+                });
+
+                previousTime = time;
+            }
+
+            function celebrateNewYear() {
+                const h1 = document.querySelector('h1');
+                const p = document.querySelector('p');
+                
+                h1.textContent = '新年快乐! 🎉';
+                p.textContent = '2026年已经到来!';
+                
+                // 添加标题弹跳动画
+                h1.classList.add('celebration-title');
+                
+                // 启动烟花特效
+                startFireworks();
+                
+                // 启动彩带飘落
+                startConfetti();
+                
+                // 弹幕爆发效果
+                startDanmakuBurst();
+            }
+
+            // ==================== 烟花特效系统 ====================
+            function startFireworks() {
+                // 立即发射一组烟花
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        createFirework();
+                    }, i * 400);
+                }
+                
+                // 持续发射烟花 8 秒
+                const fireworkInterval = setInterval(() => {
+                    createFirework();
+                }, 1200);
+                
+                // 8秒后停止
+                setTimeout(() => {
+                    clearInterval(fireworkInterval);
+                }, 8000);
+            }
+
+            function createFirework() {
+                const x = Math.random() * window.innerWidth;
+                const y = window.innerHeight - 100;
+                const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#1dd1a1'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+
+                // 创建上升的光点
+                const riseElement = document.createElement('div');
+                riseElement.style.position = 'fixed';
+                riseElement.style.left = x + 'px';
+                riseElement.style.top = y + 'px';
+                riseElement.style.width = '8px';
+                riseElement.style.height = '8px';
+                riseElement.style.backgroundColor = color;
+                riseElement.style.borderRadius = '50%';
+                riseElement.style.boxShadow = `0 0 15px ${color}`;
+                riseElement.style.pointerEvents = 'none';
+                riseElement.style.zIndex = '100';
+                riseElement.style.animation = 'fireworkRise 0.8s ease-out forwards';
+                document.body.appendChild(riseElement);
+
+                // 到达顶点后爆炸
+                setTimeout(() => {
+                    riseElement.remove();
+                    explodeFirework(x, y - 200, color);
+                }, 800);
+            }
+
+            function explodeFirework(x, y, color) {
+                const particleCount = 30 + Math.floor(Math.random() * 20);
+
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'firework-particle';
+                    particle.style.backgroundColor = color;
+                    particle.style.boxShadow = `0 0 8px ${color}`;
+                    particle.style.left = x + 'px';
+                    particle.style.top = y + 'px';
+                    document.body.appendChild(particle);
+
+                    // 随机方向
+                    const angle = (Math.PI * 2 * i) / particleCount + Math.random() * 0.5;
+                    const velocity = 100 + Math.random() * 100;
+                    const tx = Math.cos(angle) * velocity;
+                    const ty = Math.sin(angle) * velocity;
+
+                    // 使用 Web Animations API
+                    particle.animate([
+                        { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                        { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
+                    ], {
+                        duration: 1200 + Math.random() * 600,
+                        easing: 'cubic-bezier(0, .9, .57, 1)',
+                        fill: 'forwards'
+                    }).onfinish = () => particle.remove();
+                }
+            }
+
+            // ==================== 彩带飘落系统 ====================
+            function startConfetti() {
+                // 持续 2 秒
+                const confettiInterval = setInterval(() => {
+                    createConfetti();
+                }, 200);
+                
+                setTimeout(() => {
+                    clearInterval(confettiInterval);
+                }, 2000);
+                
+                // 初始爆发
+                for (let i = 0; i < 15; i++) {
+                    setTimeout(() => createConfetti(), i * 80);
+                }
+            }
+
+            // ==================== 倒计时期间随机烟花 ====================
+            function startRandomFireworksDuringCountdown() {
+                // 每 3-8 秒随机发射一个烟花
+                function scheduleNextFirework() {
+                    const delay = 0 + Math.random() * 2000;
+                    setTimeout(() => {
+                        createFirework();
+                        scheduleNextFirework();
+                    }, delay);
+                }
+                scheduleNextFirework();
+            }
+
+            function createConfetti() {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#1dd1a1'];
+                
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.borderRadius = '50%';
+                confetti.style.width = (6 + Math.random() * 6) + 'px';
+                confetti.style.height = confetti.style.width;
+                
+                const duration = 4 + Math.random() * 3;
+                confetti.style.animation = `confettiFall ${duration}s linear forwards`;
+                
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), duration * 1000);
+            }
+
+            // ==================== WISH SYSTEM ====================
+            const wishInput = document.getElementById('wish-input');
+            const addWishBtn = document.getElementById('add-wish-btn');
+            const clearWishesBtn = document.getElementById('clear-wishes-btn');
+            const wishesList = document.getElementById('wishes-list');
+
+            let wishes = JSON.parse(localStorage.getItem('newYearWishes')) || [];
+
+            function renderWishes() {
+                wishesList.innerHTML = '';
+                wishes.forEach((wish, index) => {
+                    const wishElement = document.createElement('div');
+                    wishElement.className = 'wish-item flex justify-between items-start';
+                    wishElement.innerHTML = `
+                        <p class="text-gray-200 text-lg leading-relaxed">${wish}</p>
+                        <button class="delete-wish-btn ml-4 flex-shrink-0" data-index="${index}">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    `;
+                    wishesList.appendChild(wishElement);
+                });
+                lucide.createIcons();
+            }
+
+            function saveWishes() {
+                localStorage.setItem('newYearWishes', JSON.stringify(wishes));
+            }
+
+            // addWishBtn.addEventListener('click', () => {
+            //     const wishText = wishInput.value.trim();
+            //     if (wishText) {
+            //         wishes.push(wishText);
+            //         saveWishes();
+            //         renderWishes();
+            //         wishInput.value = '';
+                    
+            //         // Add to danmaku queue
+            //         addToDanmakuQueue(wishText);
+            //     }
+            // });
+            addWishBtn.addEventListener('click', () => {
+                const wishText = wishInput.value.trim();
+                if (wishText) {
+                    // 按换行符分割
+                    const lines = wishText.split('\n');
+                    
+                    lines.forEach(line => {
+                        const trimmedLine = line.trim();
+                        if (trimmedLine) {
+                            wishes.push(trimmedLine);
+                            saveWishes();
+                            renderWishes();
+                            addToDanmakuQueue(trimmedLine);
+                        }
+                    });
+                    
+                    wishInput.value = '';
+                }
+            });
+
+            clearWishesBtn.addEventListener('click', () => {
+                if (confirm('确定要清空所有愿望吗？')) {
+                    wishes = [];
+                    saveWishes();
+                    renderWishes();
+                }
+            });
+
+            wishesList.addEventListener('click', (e) => {
+                if (e.target.closest('.delete-wish-btn')) {
+                    const index = e.target.closest('.delete-wish-btn').dataset.index;
+                    wishes.splice(index, 1);
+                    saveWishes();
+                    renderWishes();
+                }
+            });
+
+            // Initial render of wishes
+            renderWishes();
+
+            // ==================== DANMAKU SYSTEM ====================
+            const danmakuContainer = document.getElementById('danmaku-container');
+            let danmakuQueue = [...wishes];
+            let danmakuSpeed = 10; // Default speed
+            let danmakuDensity = 1; // Default density
+            let isDanmakuRunning = false;
+
+            function addToDanmakuQueue(text) {
+                danmakuQueue.push(text);
+                if (!isDanmakuRunning) {
+                    startDanmaku();
+                }
+            }
+
+            function startDanmaku() {
+                if (danmakuQueue.length === 0) {
+                    isDanmakuRunning = false;
+                    return;
+                }
+
+                isDanmakuRunning = true;
+
+                // Calculate burst count based on density
+                const baseBurst = Math.random() > 0.9 ? Math.floor(Math.random() * 3) + 1 : 1;
+                const burstCount = Math.floor(baseBurst * danmakuDensity);
+
+                for (let i = 0; i < burstCount && danmakuQueue.length > 0; i++) {
+                    const text = danmakuQueue.shift();
+                    createDanmaku(text);
+                    danmakuQueue.push(text); // Keep循环
+                }
+
+                const delay = (danmakuSpeed * 100) / danmakuDensity + Math.random() * 1000;
+                setTimeout(startDanmaku, delay);
+            }
+
+            function createDanmaku(text) {
+                const danmaku = document.createElement('div');
+                danmaku.className = 'danmaku';
+                
+                // Truncate long text
+                const displayText = text.length > 60 ? text.substring(0, 60) + '...' : text;
+                danmaku.textContent = displayText;
+
+                // Random properties
+                // const track = Math.floor(Math.random() * 12); // More tracks
+                const track = Math.floor(Math.random() * Math.floor(window.innerHeight / 40));
+                const fontSize = Math.floor(Math.random() * 16) + 14; // 14px to 30px
+                const opacity = 0.6 + Math.random() * 0.4;
+                const color = getRandomColor();
+
+                danmaku.style.top = `${track * 30 + 15}px`;
+                danmaku.style.fontSize = `${fontSize}px`;
+                danmaku.style.opacity = opacity;
+                danmaku.style.color = color;
+
+                // Random horizontal start position (mostly off-screen right)
+                danmaku.style.left = `${window.innerWidth + Math.random() * 500 + 500}px`;
+
+                // Animation with random duration
+                const duration = (8 + Math.random() * 12) / (danmakuSpeed / 10);
+                danmaku.style.left = `${window.innerWidth}px`;  // 起始位置：屏幕右边缘
+                danmaku.style.animationName = 'danmakuMove';
+                danmaku.style.animationDuration = `${duration}s`;
+
+                // Enhanced visual effects
+                danmaku.style.background = `rgba(0, 0, 0, 0.${Math.floor(Math.random() * 3) + 2})`;
+                danmaku.style.backdropFilter = 'blur(8px)';
+                danmaku.style.border = '1px solid rgba(255, 255, 255, 0.1)';
+
+                danmakuContainer.appendChild(danmaku);
+
+                // Remove after animation
+                setTimeout(() => {
+                    danmaku.remove();
+                }, duration * 1000);
+            }
+
+            function getRandomColor() {
+                const colors = [
+                    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', 
+                    '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F',
+                    '#BB8FCE', '#85C1E9', '#F8C471', '#82E0AA',
+                    '#FF9FF3', '#54A0FF', '#5F27CD', '#00D2D3'
+                ];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            // Start danmaku if there are wishes
+            if (wishes.length > 0) {
+                startDanmaku();
+            }
+
+            // ==================== BACKGROUND SYSTEM ====================
+            const starfield = document.getElementById('starfield');
+            let stars = [];
+
+            function createStars() {
+                starfield.innerHTML = '';
+                stars = [];
+                
+                for (let i = 0; i < 300; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+                    
+                    const size = Math.random() * 3;
+                    const x = Math.random() * 100;
+                    const y = Math.random() * 100;
+                    const delay = Math.random() * 8;
+                    const duration = 3 + Math.random() * 5;
+                    
+                    star.style.width = `${size}px`;
+                    star.style.height = `${size}px`;
+                    star.style.left = `${x}%`;
+                    star.style.top = `${y}%`;
+                    star.style.animationDelay = `${delay}s`;
+                    star.style.animationDuration = `${duration}s`;
+                    
+                    starfield.appendChild(star);
+                }
+            }
+
+            // Create stars
+            createStars();
+
+            // ==================== METEOR SYSTEM ====================
+            let activeMeteors = 0;
+            const maxMeteors = 10;
+
+            function createMeteor() {
+                if (activeMeteors >= maxMeteors) return;
+
+                const meteor = document.createElement('div');
+                meteor.className = 'meteor';
+
+                // 随机在屏幕右上方生成（x: 60-100%, y: 0-40%）
+                const startX = 60 + Math.random() * 40;
+                const startY = Math.random() * 40;
+
+                meteor.style.left = `${startX}%`;
+                meteor.style.top = `${startY}%`;
+
+                // 随机动画时长 0.8-1.5 秒
+                const duration = 0.8 + Math.random() * 0.7;
+                meteor.style.animation = `meteorFall ${duration}s linear forwards`;
+
+                starfield.appendChild(meteor);
+                activeMeteors++;
+
+                // 动画结束后移除
+                setTimeout(() => {
+                    meteor.remove();
+                    activeMeteors--;
+                }, duration * 1000);
+            }
+
+            function scheduleNextMeteor() {
+                // 随机间隔 2-10 秒
+                const delay = 0 + Math.random() *2000;
+                setTimeout(() => {
+                    createMeteor();
+                    scheduleNextMeteor();
+                }, delay);
+            }
+
+            // 启动流星系统
+            scheduleNextMeteor();
+
+            // Initialize mouse heart effect  
+            initMouseEffect();            
+
+            // ==================== 鼠标心跳效果 ====================
+            let lastHeart = 0;
+            const heartInterval = 50;
+            function initMouseEffect() {
+                // 鼠标移动
+                document.addEventListener('mousemove', (e) => {
+                    const now = Date.now();
+                    if (now - lastHeart < heartInterval) return;
+                    lastHeart = now;
+                    createHeart(e.clientX, e.clientY);
+                });
+                
+                // document.addEventListener('mousemove', (e) => {
+                //     createHeart(e.clientX, e.clientY);
+                // });
+    
+                
+                // 触摸支持
+                document.addEventListener('touchstart', (e) => {
+                    for (let i = 0; i < e.touches.length && i < 3; i++) {
+                        setTimeout(() => {
+                            createHeart(e.touches[i].clientX, e.touches[i].clientY);
+                        }, i * 50);
+                    }
+                }, { passive: true });
+                
+                document.addEventListener('touchmove', (e) => {
+                    const now = Date.now();
+                    if (now - lastHeart < heartInterval * 2) return;
+                    lastHeart = now;
+                    createHeart(e.touches[0].clientX, e.touches[0].clientY);
+                }, { passive: true });
+                
+                // 点击效果
+                document.addEventListener('click', (e) => {
+                    for (let i = 0; i < 5; i++) {
+                        setTimeout(() => {
+                            createHeart(
+                                e.clientX + (Math.random() - 0.5) * 50,
+                                e.clientY + (Math.random() - 0.5) * 50
+                            );
+                        }, i * 100);
+                    }
+                });
+            }
+            function createHeart(x, y) {
+                const heart = document.createElement('div');
+                heart.className = 'mouse-heart';
+                // const hearts = ['💖', '💕', '💗', '💓', '💝', '💘', '🩷', '❤️'];
+                const hearts = ['🧧', '🏮', '🧨', '🍊', '🍎', '🥂', '🎉', '🎊', '✨', '🌟', '🥟', '🍲', '🍬', '🍷', '🎆', '🎇', '💰', '🎁', '❤️', '🐴'];
+                heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = `${Math.max(0, Math.min(x, window.innerWidth - 20))}px`;
+                heart.style.top = `${Math.max(0, Math.min(y, window.innerHeight - 20))}px`;
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 1500);
+            }
+
+            // ==================== MISCELLANEOUS ====================
+            // Auto-save wish input
+            wishInput.addEventListener('input', () => {
+                localStorage.setItem('wishInputDraft', wishInput.value);
+            });
+
+            // Load draft wish
+            const draftWish = localStorage.getItem('wishInputDraft');
+            if (draftWish) {
+                wishInput.value = draftWish;
+            }
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                    addWishBtn.click();
+                }
+            });
+
+            // Add some example wishes for demonstration if none exist
+            if (wishes.length === 0) {
+                const exampleWishes = [
+                    "希望新的一年里身体健康，万事如意！",
+                    "祝愿家人朋友幸福快乐，事业有成！",
+                    "期待2026年能够实现自己的梦想！",
+                    "愿世界和平，大家都能过上好日子！",
+                    "马上有钱，马上有颜，马上有对象，马上有一切！烦恼全部马不停蹄地滚蛋！"
+                ];
+                
+                wishes = exampleWishes;
+                saveWishes();
+                renderWishes();
+                danmakuQueue = [...wishes];
+                startDanmaku();
+            }
+
+            // ==================== 弹幕爆发系统 ====================
+            function startDanmakuBurst() {
+                // 临时增加弹幕密度和速度
+                const originalSpeed = danmakuSpeed;
+                const originalDensity = danmakuDensity;
+                
+                danmakuSpeed = 15; // 加速
+                danmakuDensity = 5; // 增加密度
+                
+                // 庆祝弹幕
+                const celebrationTexts = [
+                    '🎉 新年快乐！', '🎊 恭喜发财！', '✨ 万事如意！', 
+                    '🧧 大吉大利！', '🎆 心想事成！', '💰 财源广进！',
+                    '🏮 阖家欢乐！', 
+                    '新的一年，不做牛做马，要做一匹千里马！',
+                    '多喜乐，长安宁，烦恼清零，好运满格。',
+                    '马年行大运，钱途无量'
+                ];
+                
+                // 构建新的弹幕队列：50% 用户弹幕 + 50% 庆祝弹幕
+                const newQueue = [];
+                const totalCount = 100;
+                const userCount = Math.floor(totalCount * 0.5); // 50条用户弹幕
+                const celebrationCount = totalCount - userCount; // 50条庆祝弹幕
+                
+                // 添加用户弹幕（可重复）
+                if (wishes.length > 0) {
+                    for (let i = 0; i < userCount; i++) {
+                        const randomWish = wishes[Math.floor(Math.random() * wishes.length)];
+                        newQueue.push(randomWish);
+                    }
+                } else {
+                    // 如果没有用户弹幕，用庆祝弹幕填充
+                    for (let i = 0; i < userCount; i++) {
+                        const randomCelebration = celebrationTexts[Math.floor(Math.random() * celebrationTexts.length)];
+                        newQueue.push(randomCelebration);
+                    }
+                }
+                
+                // 添加庆祝弹幕
+                for (let i = 0; i < celebrationCount; i++) {
+                    const randomCelebration = celebrationTexts[Math.floor(Math.random() * celebrationTexts.length)];
+                    newQueue.push(randomCelebration);
+                }
+                
+                // 随机打乱队列
+                for (let i = newQueue.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newQueue[i], newQueue[j]] = [newQueue[j], newQueue[i]];
+                }
+                
+                // 更新弹幕队列
+                danmakuQueue = newQueue;
+                
+                // 确保弹幕系统正在运行
+                if (!isDanmakuRunning) {
+                    startDanmaku();
+                }
+                
+                // 6秒后恢复正常速度，并恢复原始队列
+                setTimeout(() => {
+                    danmakuSpeed = originalSpeed;
+                    danmakuDensity = originalDensity;
+                    // 恢复用户弹幕队列
+                    if (wishes.length > 0) {
+                        danmakuQueue = [...wishes];
+                    }
+                }, 6000);
+            }
+
+            // Check if countdown has ended on page load
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+            
+            if (distance < 0) {
+                // 倒计时已结束，设置显示为 00
+                Object.keys(countdownElements).forEach(key => {
+                    const numberSpan = countdownElements[key].querySelector('.countdown-number');
+                    if (numberSpan) {
+                        numberSpan.textContent = '00';
+                    }
+                });
+                // 立即触发庆祝
+                celebrateNewYear();
+            } else {
+                // 倒计时未结束，初始化显示
+                updateCountdown();
+                // 启动倒计时期间的随机烟花
+                startRandomFireworksDuringCountdown();
+            }
+
+            // 每秒更新倒计时
+            setInterval(updateCountdown, 1000);
+
+            console.log('🎨 All features loaded successfully!');
+        });
+    </script>
+</body>
+</html>
